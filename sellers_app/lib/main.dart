@@ -8,13 +8,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'splashScreen/my_splash_screen.dart';
 
-
-
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   sharedPreferences = await SharedPreferences.getInstance();
   await Firebase.initializeApp(
-    options: Platform.isWindows ? DefaultFirebaseOptions.web : DefaultFirebaseOptions.currentPlatform,
+    options: Platform.isWindows
+        ? DefaultFirebaseOptions.web
+        : DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const MyApp());
 }
@@ -31,8 +31,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.purple,
       ),
-      home: const MySplashScreen(),
+      home: MySplashScreen(),
     );
   }
 }
-

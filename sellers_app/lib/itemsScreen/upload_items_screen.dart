@@ -29,11 +29,13 @@ class UploadItemsScreen extends StatefulWidget {
 class _UploadBrandsScreenState extends State<UploadItemsScreen> {
   XFile? imageFile;
 
-  TextEditingController itemInfoTextEditingController = TextEditingController();    
-  TextEditingController itemTitleTextEditingController = TextEditingController();
-  TextEditingController itemDescriptionTextEditingController = TextEditingController();
-  TextEditingController itemPriceTextEditingController = TextEditingController();
-      
+  TextEditingController itemInfoTextEditingController = TextEditingController();
+  TextEditingController itemTitleTextEditingController =
+      TextEditingController();
+  TextEditingController itemDescriptionTextEditingController =
+      TextEditingController();
+  TextEditingController itemPriceTextEditingController =
+      TextEditingController();
 
   bool isUploading = false;
   String downloadUrl = '';
@@ -49,7 +51,14 @@ class _UploadBrandsScreenState extends State<UploadItemsScreen> {
   }
 
   saveBrandInfoToFirestore() {
-    FirebaseFirestore.instance.collection('sellers').doc(sharedPreferences!.getString('uid')).collection('brands').doc(widget.model.brandID).collection('items').doc(itemUniqueId).set({
+    FirebaseFirestore.instance
+        .collection('sellers')
+        .doc(sharedPreferences!.getString('uid'))
+        .collection('brands')
+        .doc(widget.model.brandID)
+        .collection('items')
+        .doc(itemUniqueId)
+        .set({
       'itemID': itemUniqueId,
       'brandID': widget.model.brandID,
       'sellerID': sharedPreferences!.getString('uid'),
@@ -63,46 +72,48 @@ class _UploadBrandsScreenState extends State<UploadItemsScreen> {
       'status': 'available',
     }).then((value) {
       FirebaseFirestore.instance.collection('items').doc(itemUniqueId).set({
-      'itemID': itemUniqueId,
-      'brandID': widget.model.brandID,
-      'sellerID': sharedPreferences!.getString('uid'),
-      'sellerName': sharedPreferences!.getString('name'),
-      'itemTitle': itemTitleTextEditingController.text.trim(),
-      'itemInfo': itemInfoTextEditingController.text.trim(),
-      'longDescription': itemDescriptionTextEditingController.text.trim(),
-      'itemPrice': itemPriceTextEditingController.text.trim(),
-      'thumbnailUrl': downloadUrl,
-      'publishedDate': DateTime.now(),
-      'status': 'available',
-    });
+        'itemID': itemUniqueId,
+        'brandID': widget.model.brandID,
+        'sellerID': sharedPreferences!.getString('uid'),
+        'sellerName': sharedPreferences!.getString('name'),
+        'itemTitle': itemTitleTextEditingController.text.trim(),
+        'itemInfo': itemInfoTextEditingController.text.trim(),
+        'longDescription': itemDescriptionTextEditingController.text.trim(),
+        'itemPrice': itemPriceTextEditingController.text.trim(),
+        'thumbnailUrl': downloadUrl,
+        'publishedDate': DateTime.now(),
+        'status': 'available',
+      });
       Fluttertoast.showToast(
-          msg: '${itemTitleTextEditingController.text} added successfully', gravity: ToastGravity.CENTER);
+          msg: '${itemTitleTextEditingController.text} added successfully',
+          gravity: ToastGravity.CENTER);
       setState(() {
         isUploading = false;
       });
       Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>  HomeScreen()));
+          context, MaterialPageRoute(builder: (context) => HomeScreen()));
     });
   }
 
-  validateUploadForm() async{
+  validateUploadForm() async {
     if (imageFile != null) {
       if (itemInfoTextEditingController.text.isNotEmpty &&
-          itemTitleTextEditingController.text.isNotEmpty&&
-          itemDescriptionTextEditingController.text.isNotEmpty&&
+          itemTitleTextEditingController.text.isNotEmpty &&
+          itemDescriptionTextEditingController.text.isNotEmpty &&
           itemPriceTextEditingController.text.isNotEmpty) {
         setState(() {
           isUploading = true;
         });
         //1. upload brand to storage - get download url
         String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-          final storageRef = FirebaseStorage.instance.ref().child("sellersItemsImages").child("$fileName.jpg");
-          final uploadTask = storageRef.putFile(File(imageFile!.path));
-          downloadUrl = await (await uploadTask).ref.getDownloadURL();
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child("sellersItemsImages")
+            .child("$fileName.jpg");
+        final uploadTask = storageRef.putFile(File(imageFile!.path));
+        downloadUrl = await (await uploadTask).ref.getDownloadURL();
         //2. upload brand info to firestore
-         saveBrandInfoToFirestore();
+        saveBrandInfoToFirestore();
       } else {
         Fluttertoast.showToast(
             msg: 'Please fill all the fields', gravity: ToastGravity.CENTER);
@@ -129,10 +140,8 @@ class _UploadBrandsScreenState extends State<UploadItemsScreen> {
         ),
         leading: IconButton(
           onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const MySplashScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => MySplashScreen()));
           },
           icon: const Icon(
             Icons.arrow_back,
@@ -149,11 +158,15 @@ class _UploadBrandsScreenState extends State<UploadItemsScreen> {
           ),
         ),
         actions: [
-              isUploading? const Center(
-                child: SizedBox(
-                  height: 25.0,
-                  width: 25.0,
-                  child: CircularProgressIndicator(color: Colors.white,))) : IconButton(
+          isUploading
+              ? const Center(
+                  child: SizedBox(
+                      height: 25.0,
+                      width: 25.0,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      )))
+              : IconButton(
                   onPressed: () {
                     // validate upload form
                     validateUploadForm();
@@ -173,8 +186,7 @@ class _UploadBrandsScreenState extends State<UploadItemsScreen> {
       ),
       body: ListView(
         children: [
-
-          isUploading ? linearProgressBar() :  Container(),
+          isUploading ? linearProgressBar() : Container(),
 
           SizedBox(
             height: 240.0,

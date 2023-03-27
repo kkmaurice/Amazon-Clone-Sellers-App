@@ -9,9 +9,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 import '../global/global.dart';
-import '../brandsScreens/home_screen.dart';
 import '../splashScreen/my_splash_screen.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/loading_dialog.dart';
@@ -60,7 +58,7 @@ class _LoginTabPageState extends State<LoginTabPage> {
     });
 
     if (currentUser != null) {
-     checkIfSellerRecordExists(currentUser!); 
+      checkIfSellerRecordExists(currentUser!);
     }
   }
 
@@ -70,24 +68,28 @@ class _LoginTabPageState extends State<LoginTabPage> {
         .doc(currentUser.uid)
         .get()
         .then((record) async {
-      if(record.exists){
-       // status approved
-       if(record.data()!["status"] == 'approved') {
-        sharedPreferences = await SharedPreferences.getInstance();
-        await sharedPreferences!.setString("uid", record.data()!["uid"]);
-        await sharedPreferences!.setString("name", record.data()!["name"]);
-        await sharedPreferences!.setString("email", record.data()!["email"]);
-        await sharedPreferences!.setString("photoUrl", record.data()!["photoUrl"]);
+      if (record.exists) {
+        // status approved
+        if (record.data()!["status"] == 'approved') {
+          sharedPreferences = await SharedPreferences.getInstance();
+          await sharedPreferences!.setString("uid", record.data()!["uid"]);
+          await sharedPreferences!.setString("name", record.data()!["name"]);
+          await sharedPreferences!.setString("email", record.data()!["email"]);
+          await sharedPreferences!
+              .setString("photoUrl", record.data()!["photoUrl"]);
 
-        //navigate to home screen
-        Navigator.push(context, MaterialPageRoute(builder: (c)=> const MySplashScreen()));
-       } else{
+          //navigate to home screen
+          Navigator.push(context,
+              MaterialPageRoute(builder: (c) => const MySplashScreen()));
+        } else {
           FirebaseAuth.instance.signOut();
           Navigator.pop(context);
           Fluttertoast.showToast(
-            msg: "You have been Blocked by Admin.\n Please contact Admin: admin@ishop.com.",
-            gravity: ToastGravity.CENTER,);
-       }
+            msg:
+                "You have been Blocked by Admin.\n Please contact Admin: admin@ishop.com.",
+            gravity: ToastGravity.CENTER,
+          );
+        }
       } else // status not approved
       {
         FirebaseAuth.instance.signOut();
@@ -95,7 +97,7 @@ class _LoginTabPageState extends State<LoginTabPage> {
         Fluttertoast.showToast(
           msg: "This seller's record does not exit",
           gravity: ToastGravity.CENTER,
-          );
+        );
       }
     });
   }
