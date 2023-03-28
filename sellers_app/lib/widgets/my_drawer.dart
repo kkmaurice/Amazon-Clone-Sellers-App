@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:sellers_app/global/global.dart';
 import 'package:sellers_app/ordersScreen/orders_screen.dart';
+import 'package:sellers_app/shiftedParcelsScreen/shifted_parcels_screen.dart';
 
 import '../splashScreen/my_splash_screen.dart';
 
@@ -121,13 +122,18 @@ class MyDrawer extends StatelessWidget {
                   color: Colors.grey,
                 ),
                 title: const Text(
-                  'Not Yet Received Orders',
+                  'Shifted Parcels',
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 18.0,
                   ),
                 ),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ShiftedParcelsScreen()));
+                },
               ),
               const SizedBox(
                 height: 15,

@@ -103,8 +103,7 @@ class AddressDesign extends StatelessWidget {
                   .collection('sellers')
                   .doc(sharedPreferences!.getString('uid'))
                   .update({
-                'earning':
-                    double.parse(previousEarnings) + double.parse(totalAmount),
+                'earning': double.parse(previousEarnings + totalAmount),
               }).whenComplete(() {
                 // Change the order status to 'shifted'
                 FirebaseFirestore.instance
@@ -131,11 +130,13 @@ class AddressDesign extends StatelessWidget {
               });
             } else if (orderStatus == 'shifted') {
               // implement parcel delivered and received
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const MySplashScreen()));
             } else if (orderStatus == 'ended') {
               // implement Rate this seller
             } else {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => MySplashScreen()));
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const MySplashScreen()));
             }
           },
           child: Padding(
