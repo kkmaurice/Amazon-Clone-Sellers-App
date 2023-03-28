@@ -5,6 +5,8 @@ import 'package:sellers_app/global/global.dart';
 import 'package:sellers_app/ordersScreen/orders_screen.dart';
 import 'package:sellers_app/shiftedParcelsScreen/shifted_parcels_screen.dart';
 
+import '../earningsScreen/earnings_screen.dart';
+import '../history/history_screen.dart';
 import '../splashScreen/my_splash_screen.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -88,6 +90,33 @@ class MyDrawer extends StatelessWidget {
                 thickness: 2,
                 indent: 15.0,
               ),
+              // earnings
+              ListTile(
+                leading: const Icon(
+                  Icons.money,
+                  color: Colors.grey,
+                ),
+                title: const Text(
+                  'Earnings',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 18.0,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const EarningsScreen()));
+                },
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              const Divider(
+                color: Colors.grey,
+                height: 10.0,
+                thickness: 2,
+                indent: 15.0,
+              ),
               // my orders
               ListTile(
                 leading: const Icon(
@@ -157,7 +186,12 @@ class MyDrawer extends StatelessWidget {
                     fontSize: 18.0,
                   ),
                 ),
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const HistoryScreen()));
+                },
               ),
               const SizedBox(
                 height: 15,
@@ -168,27 +202,7 @@ class MyDrawer extends StatelessWidget {
                 thickness: 2,
                 indent: 15.0,
               ),
-              // search
-              ListTile(
-                leading: const Icon(
-                  Icons.search,
-                  color: Colors.grey,
-                ),
-                title: const Text(
-                  'Search',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 18.0,
-                  ),
-                ),
-                onTap: () {},
-              ),
-              const Divider(
-                color: Colors.grey,
-                height: 10.0,
-                thickness: 2,
-                indent: 15.0,
-              ),
+
               // logout
               ListTile(
                 leading: const Icon(
