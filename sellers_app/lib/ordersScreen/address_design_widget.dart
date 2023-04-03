@@ -1,9 +1,9 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart';
 import 'package:sellers_app/global/global.dart';
 
 import '../models/address.dart';
@@ -25,6 +25,52 @@ class AddressDesign extends StatelessWidget {
     this.sellerId,
     this.orderByUser,
   }) : super(key: key);
+  
+
+  sendNotificationToUser(userUID, orderId) async {
+    String deviceToken = '';
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(userUID)
+        .get()
+        .then((value) {
+      if (value.data()!['deviceToken'] != null) {
+        deviceToken = value.data()!['deviceToken'];
+      }
+    });
+    notificationFormat(
+        deviceToken, orderId, sharedPreferences!.getString("name"));
+  }
+
+  notificationFormat(userDeviceToken, orderID, sellerName) {
+    Map<String, String> headerNotification = {
+      'Content-Type': 'application/json',
+      'Authorization': fcmServerToken
+    };
+
+    Map bodyNotification = {
+      'body':
+          'Dear user, Your parcel (# $orderId) has been shifted successfully by seller $sellerName. \nPleas check now',
+      'title': 'Parcel Shifted',
+    };
+
+    Map dataMap = {
+      'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+      'id': '1',
+      'status': 'done',
+      'userOrderId': orderId,
+    };
+
+    Map officialNotification = {
+      'notification': bodyNotification,
+      'priority': 'high',
+      'data': dataMap,
+      'to': userDeviceToken
+    };
+
+    post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: headerNotification, body: jsonEncode(officialNotification));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +167,8 @@ class AddressDesign extends StatelessWidget {
                     'status': 'shifted',
                   }).whenComplete(() {
                     // send notification to user that the order has been shifted
+                    sendNotificationToUser(orderByUser, orderId);
+
                     Fluttertoast.showToast(msg: 'Confirmed successfully');
 
                     Navigator.of(context).push(MaterialPageRoute(

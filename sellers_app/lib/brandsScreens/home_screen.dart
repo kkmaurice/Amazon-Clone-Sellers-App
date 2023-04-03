@@ -5,6 +5,7 @@ import 'package:sellers_app/brandsScreens/brands_ui_design_widget.dart';
 import 'package:sellers_app/brandsScreens/upload_brands_screen.dart';
 import 'package:sellers_app/global/global.dart';
 import 'package:sellers_app/models/brands.dart';
+import 'package:sellers_app/push_notification/push_notifications_system.dart';
 import 'package:sellers_app/widgets/text_delegate_header_widget.dart';
 
 import '../widgets/my_drawer.dart';
@@ -28,6 +29,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    PushNotificationSystem pushNotificationsSystem = PushNotificationSystem();
+    pushNotificationsSystem.whenNotificationReceived(context);
+    pushNotificationsSystem.registrationToken();
+
     getSellerEarningsFromDatabase();
     super.initState();
   }
