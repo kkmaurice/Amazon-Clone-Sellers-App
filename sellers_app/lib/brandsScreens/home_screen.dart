@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:sellers_app/brandsScreens/brands_ui_design_widget.dart';
@@ -8,6 +9,8 @@ import 'package:sellers_app/models/brands.dart';
 import 'package:sellers_app/push_notification/push_notifications_system.dart';
 import 'package:sellers_app/widgets/text_delegate_header_widget.dart';
 
+import '../functions/functions.dart';
+import '../splashScreen/my_splash_screen.dart';
 import '../widgets/my_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,6 +21,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  restrictBlockedSellersFromUsingSellersApp() async {
+    await FirebaseFirestore.instance
+        .collection("sellers")
+        .doc(sharedPreferences!.getString("uid"))
+        .get()
+        .then((value) {
+      if (value.data()!["status"] != "approved") {
+        showResuableSnackBar(context, "you are blocked by admin");
+        showResuableSnackBar(context, "contact admin: admin2@admin.com");
+
+        FirebaseAuth.instance.signOut();
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return const MySplashScreen();
+        }));
+      } 
+    });
+  }
+
   getSellerEarningsFromDatabase() {
     previousEarnings = FirebaseFirestore.instance
         .collection('sellers')
@@ -32,8 +53,8 @@ class _HomeScreenState extends State<HomeScreen> {
     PushNotificationSystem pushNotificationsSystem = PushNotificationSystem();
     pushNotificationsSystem.whenNotificationReceived(context);
     pushNotificationsSystem.registrationToken();
-
     getSellerEarningsFromDatabase();
+    restrictBlockedSellersFromUsingSellersApp();
     super.initState();
   }
 
